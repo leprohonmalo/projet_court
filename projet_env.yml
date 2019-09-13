@@ -1,0 +1,9 @@
+name: pcourt-env
+channels :
+    - defaults
+    - bioconda
+    - conda-forge
+dependencies:
+    - pip
+    - pip:
+        - pbxplore

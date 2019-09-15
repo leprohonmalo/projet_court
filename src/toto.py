@@ -20,11 +20,15 @@ import pandas as pd
 import math
 import copy
 
-#to modify
 def combine_element(
     listi, replacement=True, order=True
 ):  
-    """ Return a list of string representing all possible couple combinations of every element of listi """
+    """ Return a list of string representing all possible couple combinations of every element of listi
+    parameters:
+        -listi : list, a list of elements
+        -replacemnt : boolean, define if combinations of the same item are possible
+        -order : boolean, define if items oder in a combination matters (for instance ab != ba)
+    """
     if replacement:
         lever = 0
     else:
@@ -49,7 +53,13 @@ def combine_element(
     return list_fini
 
 def pos_mutual_information(pos1, pos2, freq_df, comb_freq_df):
-    """ Compute mutual information between two positions in a PB sequence """
+    """ Compute mutual information between two positions in a PB sequence 
+    parameters 
+        -pos1 : int or str, a position in a sequence of PB to compute MI with pos2
+        -pos2 : int or str, a position in a sequence of PB to compute MI with pos1
+        -freq_df : pd.Dataframe, a table of PB frequences at a given position
+        -comb_freq_df: pd.Dataframe, a table of PB combination frequences at two given position
+    """
     comb_pos = str(pos1) + ":" + str(pos2)
     mutual_information = 0
     for i in freq_df.index:
@@ -66,9 +76,6 @@ def pos_mutual_information(pos1, pos2, freq_df, comb_freq_df):
     return mutual_information
 
 
-
-# MUST REMOVE Z AT SOME POINT
-
 # This create a dataframe with a sequence in each row.
 # Matrix of sequences
 table_seq = pd.DataFrame()
@@ -76,15 +83,16 @@ mock_pb_seq = "ZZdddfklonbfklmmmmmmmmnopafklnoiaklmmmmmnoopacddddddehkllmmmmngoi
 n = 20
 for i in range(n):
     table_seq = pd.concat(
-        [table_seq, pd.DataFrame(list(mock_pb_seq), columns=[i])], axis=1
+        [table_seq, pd.DataFrame(list(mock_pb_seq)[2:-2], columns=[i])], axis=1
     )
 
 table_seq = table_seq.transpose()
+table_seq.columns = list(range(2,len(table_seq.columns) + 2))
 print(table_seq)
 
 
 # Matrix of frequence of PB at a position
-table_pos_freq = pd.DataFrame(index=list("abcdefghijklmnopZ"))
+table_pos_freq = pd.DataFrame(index=list("abcdefghijklmnop"))
 for i in range(len(table_seq.columns)):
     table_pos_freq = pd.concat(
         [table_pos_freq, table_seq.iloc[:, i].value_counts(normalize=True)],
@@ -97,11 +105,11 @@ print(table_pos_freq)
 
 # Matrix of frequece of combination of PB at two positions
 dic_keys = combine_element(
-    list("abcdefghijklmnopZ"),replacement=True, order=True
+    list("abcdefghijklmnop"),replacement=True, order=True
 )  # See if this list can be extracted from dataframe
 table_dbpos_freq = pd.DataFrame(
-    index=list(combine_element(list("abcdefghijklmnopZ"), replacement=True, order=True)),
-    columns=combine_element(list(range(len(table_seq.columns))), replacement=False, order=False),
+    index=list(combine_element(list("abcdefghijklmnop"), replacement=True, order=True)),
+    columns=combine_element(list(table_seq.columns), replacement=False, order=False),
 )
 print(dic_keys)
 for i in list(table_dbpos_freq.columns):
@@ -109,7 +117,7 @@ for i in list(table_dbpos_freq.columns):
     pos1 = i.split(":")[0]
     pos2 = i.split(":")[1]
     for j in range(len(table_seq.index)):
-        comb = [table_seq.iloc[j, int(pos1)], table_seq.loc[j, int(pos2)]]
+        comb = [table_seq.iloc[j, int(pos1)-2], table_seq.iloc[j, int(pos2)-2]]
         comb.sort(key=str.lower)
         comb = ":".join(comb)
         pb_couple_count[comb] = pb_couple_count[comb] + 1/len(table_seq.index)
@@ -119,3 +127,6 @@ print(pb_couple_count)
 print(table_dbpos_freq)
 
 print(pos_mutual_information(2,3,table_pos_freq, table_dbpos_freq))
+
+#Matrix of MI
+table_mi = pd.DataFrame()

@@ -6,19 +6,19 @@
 
 # To implement:
 #   -function to get arguments, helps function and interaction with user (only pdb or pdb + molecular
-#   dynamics files?)
+#   dynamics files?) <---- Doing this
 #   -pbxplore part, waiting for test dataset
-#   -create matrixs from pbxplore output to compute MI <---- Doing this
-#   -analysis of MI results, weigthed network building (maybe try visualization on PyMol)
+#   -create matrixs from pbxplore output to compute MI <---- Done
+#   -analysis of MI results, weigthed network building (maybe try visualization on PyMol) <--- heatmap needs axis labels, pymol thing
 #   -other stuff if time allows (probably not)
 
-# Problem to fix:
-#   -remove Z from pb sequence (and maintain position data)
 
 import pbxplore as pb
 import pandas as pd
 import math
 import copy
+import matplotlib.pyplot as plt
+import seaborn as sns
 
 def combine_element(
     listi, replacement=True, order=True
@@ -71,7 +71,6 @@ def pos_mutual_information(pos1, pos2, freq_df, comb_freq_df):
             if probx != 0:
                 if proby != 0:
                     if probxy != 0:
-                        print(probx, proby, probxy)
                         mutual_information += probxy * math.log(probxy / (probx * proby), 2)
     return mutual_information
 
@@ -129,4 +128,32 @@ print(table_dbpos_freq)
 print(pos_mutual_information(2,3,table_pos_freq, table_dbpos_freq))
 
 #Matrix of MI
-table_mi = pd.DataFrame()
+table_mi = pd.DataFrame(columns=table_seq.columns, index=table_seq.columns, dtype="float")
+for i in list(table_mi.index):
+    for j in list(table_mi.columns):
+        if i == j:
+            table_mi.loc[i,j] = 1
+        elif i > j:
+            table_mi.loc[i,j] = pos_mutual_information(j,i,table_pos_freq, table_dbpos_freq)
+        else:
+            table_mi.loc[i,j] = pos_mutual_information(i,j,table_pos_freq, table_dbpos_freq)
+print(table_mi)
+
+#fig = plt.figure()
+#ax = fig.adsubplot()
+#plt.imshow(table_mi, cmap="hot", interpolation="nearest")
+#ax.set_xticks(range(len(table_mi.index)))
+#ax.set_xticks(range(len(table_mi.columns)))
+#ax.set_xticklabels(table_mi.index)
+#ax.ser_xticklabels(table_mi.columns)
+#plt.show()
+plt.figure(figsize=(50,25))
+ax.set_xlabel = ("position")
+sns.set(font_scale = 0.7)
+mi_heatmap = sns.heatmap(table_mi, annot=False, xticklabels=2, square = True, linewidths=0.5, cmap="coolwarm", cbar_kws={"label" : "Mutual Information"})
+mi_heatmap.set_yticklabels(mi_heatmap.get_yticklabels(), rotation=0)
+mi_heatmap.set_xticklabels(mi_heatmap.get_xticklabels(), rotation=0)
+plt.xlabel=("position")
+plt.ylabel=("position")
+plt.tittle=("Mutal Information between positions")
+plt.show()

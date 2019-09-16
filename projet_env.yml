@@ -8,3 +8,5 @@ dependencies:
     - pip:
         - pbxplore
         - pandas
+        - matplotlib
+        - seaborn

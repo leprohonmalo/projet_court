@@ -6,12 +6,14 @@
 
 # To implement:
 #   -function to get arguments, helps function and interaction with user (only pdb or pdb + molecular
-#   dynamics files?) <---- Doing this
+#   dynamics files?) <---- Doing this 
 #   -pbxplore part, waiting for test dataset
 #   -create matrixs from pbxplore output to compute MI <---- Done
 #   -analysis of MI results, weigthed network building (maybe try visualization on PyMol) <--- heatmap needs axis labels, pymol thing
 #   -other stuff if time allows (probably not)
 
+#To do: verify that each argument is correct : --output dir is an existing directory, topo file in an existing, topo file, traj file in an existing, traj file
+# Write a true help
 
 import pbxplore as pb
 import pandas as pd
@@ -19,6 +21,67 @@ import math
 import copy
 import matplotlib.pyplot as plt
 import seaborn as sns
+import os
+import sys
+import getopt
+
+def main(argv):
+    try:
+        opts, args = getopt.getopt(argv, "ho:", ["help", "output=", "traj=", "topo="])
+    except getopt.GetoptError:
+        print("You did not enter correctly each argument : output directory, trajectory file, topology file.\n")
+        use()
+        sys.exit(2)
+
+    output_dir = None
+    traj_file = None
+    topo_file = None
+
+    for opt, arg in opts:
+        if opt in ("-h", "--help"):      
+            use()                     
+        elif opt in ("-o", "--output"):
+            output_dir = arg
+        elif opt == "--traj":
+            traj_file = arg
+        elif opt == "--topo":
+            topo_file = arg
+
+    path_list = [output_dir, traj_file, topo_file]
+    if None in path_list or "" in path_list:
+        print("You did not enter correctly each argument : output directory, trajectory file, topology file.\n")
+        use()
+    print(path_list)
+    
+    check_path(output_dir, "directory")
+    check_path(traj_file, "file")
+    check_path(topo_file, "file")
+
+
+def use():
+    print("Pour le moment y'a pas d'aide parce que y'a des trucs plus important à faire.\n")
+    sys.exit()
+
+def check_path(path, path_type):
+    path_exist = os.path.exists(path)
+    path_to_file = os.path.isfile(path)
+    flag = True
+    if path_exist:
+        if path_to_file:
+            if path_type == "file":
+                flag = False
+        else:
+            if path_type == "directory":
+                flag = False
+    if flag:
+        print("Your path: {} is not a {} or does not exists.\n".format(path, path_type))
+        use()
+        
+         
+
+
+
+
 
 def combine_element(
     listi, replacement=True, order=True
@@ -74,6 +137,8 @@ def pos_mutual_information(pos1, pos2, freq_df, comb_freq_df):
                         mutual_information += probxy * math.log(probxy / (probx * proby), 2)
     return mutual_information
 
+main(sys.argv[1:])
+sys.exit()
 
 # This create a dataframe with a sequence in each row.
 # Matrix of sequences

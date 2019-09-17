@@ -1,4 +1,11 @@
 #########Files and directories not under version control#########
 
+# Files
+
 *.tar
 *.gz
+
+# Directories :
+raw_data/DM_Calf-1_L653R/
+raw_data/DM_Calf-1_L721R/
+raw_data/DM_Calf-1_WT/

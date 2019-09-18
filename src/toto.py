@@ -124,7 +124,7 @@ def use():
         Jallu, Alexandre G. de Brevern, Pierre Poulain, PBxplore: A Tool To Analyze Local Protein
         Structure And Deformability With Protein Blocks
         (bioRxiv 136408; doi: https://doi.org/10.1101/136408).
-    """
+    """)
     sys.exit()
 
 def check_path(path, path_type):

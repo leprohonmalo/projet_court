@@ -1,26 +1,12 @@
 #! /usr/bin/env python3
 
-
 ##################################Script Projet court#################################
 
 # author : Malo Leprohon
 
-# For now, it is just a draft and a testing script
-
-# To implement:
-#   -function to get arguments, helps function and interaction with user (only pdb or pdb + molecular
-#   dynamics files?) <---- Doing this 
-#   -pbxplore part, waiting for test dataset <---- Doing this
-#   -create matrixs from pbxplore output to compute MI <---- Done
-#   -analysis of MI results, weigthed network building (maybe try visualization on PyMol) <--- heatmap needs axis labels, pymol thing
-#   -other stuff if time allows (probably not)
-
-#To do: 
-# verify that each argument is correct : --output dir is an existing directory, topo file in an existing, topo file, traj file in an existing, traj file
-# Write a true help
-# change value for MI between same pos
-
-#Change done : removed some checking print in differents functions, wrote documentation, help, and added commentary 
+""" This script computes mutual information between protein blocks sequences extracted from molecular dynamic 
+    trajectory and topology file.
+"""
 
 import os
 import sys

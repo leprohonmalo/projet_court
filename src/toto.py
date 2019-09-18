@@ -30,6 +30,7 @@ import pbxplore as pbx
 import pandas as pd
 from numpy import NaN
 import math
+import matplotlib
 import matplotlib.pyplot as plt
 import seaborn as sns
 from copy import deepcopy
@@ -212,8 +213,8 @@ def mk_mi_table(table_pos_freq, table_dbpos_freq):
     print(table_mi)
     return table_mi
 
-def mi_heatmap(table_mi):
-    plt.figure(figsize=(50,25))
+def mi_heatmap(table_mi, output_dir):
+    fig = plt.figure(figsize=(50,25))
     sns.set(font_scale = 0.7)
     mi_heatmap = sns.heatmap(table_mi, mask=table_mi.isnull(), annot=False, xticklabels=2, square = True, linewidths=0.5, cmap="coolwarm", cbar_kws={"label" : "Mutual Information"})
     mi_heatmap.set_yticklabels(mi_heatmap.get_yticklabels(), rotation=0)
@@ -221,7 +222,7 @@ def mi_heatmap(table_mi):
     plt.xlabel=("position")
     plt.ylabel=("position")
     plt.tittle=("Mutal Information between positions")
-    plt.show()
+    fig.savefig(output_dir+"mutual_information_heatmap.pdf")
 
 
 def main():
@@ -230,7 +231,11 @@ def main():
     table_pos_freq = mk_table_pos_freq(table_seq)
     table_dbpos_freq = mk_table_dbpos_freq(table_seq)
     table_mi = mk_mi_table(table_pos_freq, table_dbpos_freq)
-    mi_heatmap(table_mi)
+    mi_heatmap(table_mi, parameters[0])
+    table_seq.to_csv(parameters[0]+"PB_seq_table.csv")
+    table_pos_freq.to_csv(parameters[0]+"PB_pos_freq_table.csv")
+    table_dbpos_freq.to_csv(parameters[0]+"PB_dbpos_freq_table.csv")
+    table_mi.to_csv(parameters[0]+"MI_table.csv")
     sys.exit()
 
 if __name__ == "__main__":

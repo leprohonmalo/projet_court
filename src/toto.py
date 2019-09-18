@@ -390,7 +390,7 @@ def main():
     print("\nExtracting PB sequences from trajectory.\n")
     # Extraction of PB sequences with pbxplore
     table_seq = mk_table_seq(parameters[1], parameters[2])
-    print("Computing frequences of PB (This may take a few minutes)\n")
+    print("\nComputing frequences of PB (This may take a few minutes)\n")
     # Computation of frequencies
     table_pos_freq = mk_table_pos_freq(table_seq)
     table_dbpos_freq = mk_table_dbpos_freq(table_seq)
